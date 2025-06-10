@@ -45,6 +45,14 @@ class StudentInfo(object):
             user_info = students.pop(student_id)
             print('学号是{}，{}同学的信息已被删除'.format(student_id, user_info['name']))
 
+    def deletes(self,ids):
+        for id_ in ids:
+            if id_ not in self.students:
+                print(f'{id_}不在学生库中')
+                continue
+            student_info = self.students.pop(id_)
+            print(f'学号{id_} 学生{student_info['name']} 已被删除')
+
     def update(self,student_id, **kwargs):
         if student_id not in self.students:
             print('不存在学号:{}'.format(student_id))
@@ -56,6 +64,19 @@ class StudentInfo(object):
         self.students[student_id] = kwargs
         print('信息已更新')
 
+    def updates(self,update_students):
+        for student in update_students:
+            id_ = list(student.keys())[0]
+            if id_ not in self.students:
+                print(f'学号{id_}不存在')
+                continue
+            user_info = student[id_]
+            check = self.check_user_info(**user_info)
+            if check!=True:
+                print(check)
+                continue
+            self.students[id_] = user_info
+        print('所有用户信息更新完成！')
     def search_users(self,**kwargs):
         values = list(self.students.values())
         key = None
@@ -77,7 +98,7 @@ class StudentInfo(object):
             print('没有发现搜索的关键字')
             return
         for user in values:
-            if user[key] == value:
+            if value in user[key]:
                 ret.append(user)
         return ret
 
@@ -138,6 +159,20 @@ if __name__=='__main__':
     ]
     student_info.adds(users)
     student_info.get_all_students()
+    print("----------------------")
+    student_info.deletes([7,8])
+    student_info.get_all_students()
+    print("----------------------")
+
+    student_info.updates([
+        {1:{'name':'dewei zhang','age':18,'class_num':'B','sex':'boy'}},
+        {2: {'name': 'dewei zhang', 'age': 28, 'class_num': 'B'}}
+    ])
+    student_info.get_all_students()
+
+    ret = student_info.search_users(name='')
+    print(ret)
+
 
 
 
